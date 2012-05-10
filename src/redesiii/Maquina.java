@@ -7,6 +7,8 @@ package redesiii;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,7 +21,7 @@ public class Maquina implements Interfaz_Cliente_Maquina {
 
     @Override
     public String verificar() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return ejecutar("ps -e")[0];
     }
 
     @Override
@@ -27,14 +29,11 @@ public class Maquina implements Interfaz_Cliente_Maquina {
 
         String s = null;
         String[] salida = new String[2];
-        salida[0]="";
-        salida[1]="";
+        salida[0] = "";
+        salida[1] = "";
         
-
         try {
 
-
-           
             // Ejcutamos el comando
             Process p = Runtime.getRuntime().exec(script);
 
@@ -47,25 +46,24 @@ public class Maquina implements Interfaz_Cliente_Maquina {
             // Leemos la salida del comando
             System.out.println("Ésta es la salida standard del comando:\n");
             while ((s = stdInput.readLine()) != null) {
-                salida[0]+=s+"\n";
+                salida[0] += s + "\n";
             }
             System.out.println(salida[0]);
             // Leemos los errores si los hubiera
             System.out.println("Ésta es la salida standard de error del comando (si la hay):\n");
             while ((s = stdError.readLine()) != null) {
-                
-                salida[1]+=s+"\n";
+
+                salida[1] += s + "\n";
             }
-            
+
             System.out.println(salida[1]);
 
             System.exit(0);
-        } catch (IOException e) {
-            System.out.println("Excepción: ");
-            e.printStackTrace();
-            System.exit(-1);
-        }
-    return salida;}
-}
- 
 
+          
+        } catch (IOException ex) {
+            Logger.getLogger(Maquina.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return salida;
+    }
+}

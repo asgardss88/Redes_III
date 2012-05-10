@@ -5,6 +5,7 @@
 package redesiii;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  *
@@ -12,8 +13,8 @@ import java.rmi.Remote;
  */
 public interface Interfaz_Cliente_Maquina extends Remote {
     
-    public String verificar();
+    public String verificar() throws RemoteException;
     
-    public String[] ejecutar(String script);
+    public String[] ejecutar(String script) throws RemoteException;
     
 }
