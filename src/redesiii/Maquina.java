@@ -7,6 +7,13 @@ package redesiii;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +23,37 @@ import java.util.logging.Logger;
  */
 public class Maquina implements Interfaz_Cliente_Maquina {
 
-    public Maquina() {
+    private Interfaz_Maquina_Cliente servidor;
+    private int puerto;
+
+    public int getPuerto() {
+        return puerto;
+    }
+    
+
+    public Interfaz_Maquina_Cliente getServidor() {
+        return servidor;
+    }
+    
+    public Maquina(String ip, int puerto) {
+        try {
+            this.puerto = puerto;
+            InetAddress direccion = InetAddress.getByName(ip);
+            
+            String direc = "rmi://" + ip + ":" + puerto + "/Cliente";
+            servidor = (Interfaz_Maquina_Cliente) Naming.lookup(direc);
+            
+        } catch (NotBoundException ex) {
+            Logger.getLogger(Maquina.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Maquina.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Maquina.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Maquina.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+        
     }
 
     @Override
@@ -66,4 +103,30 @@ public class Maquina implements Interfaz_Cliente_Maquina {
         }
         return salida;
     }
+
+public static void main(String[] args){
+        try {
+            
+            System.setProperty(
+                           "java.rmi.server.codebase",
+                           "file:" + System.getProperty("user.dir") + "/");
+                   Maquina maquina = new Maquina(args[0],Integer.parseInt(args[1]));        
+                   java.rmi.registry.LocateRegistry.createRegistry(maquina.getPuerto());
+                   String host = InetAddress.getLocalHost().toString().split("/")[1];
+
+                    
+                   Naming.rebind("rmi://" + host + ":" + maquina.getPuerto() + "/Maquina", maquina);
+        
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Maquina.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Maquina.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Maquina.class.getName()).log(Level.SEVERE, null, ex);
+        }
+   
+    
+}
+
+
 }
