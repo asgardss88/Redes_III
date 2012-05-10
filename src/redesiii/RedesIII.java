@@ -46,7 +46,7 @@ public class RedesIII {
 //                System.out.println(c.getName());
  //              System.out.println(c.getContent() );
                 
-                Maquina m = new Maquina();
+                
                 
                 m.ejecutar("ps -e");
             
