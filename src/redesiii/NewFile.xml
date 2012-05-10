@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problemas>
+    <proceso1>
+        <expresion>aaaaaa</expresion>
+        <solucion>sudo apt-get upgrade</solucion>
+    </proceso1>
+     <proceso2>
+        <expresion>aaaaaa</expresion>
+        <solucion>sudo apt-get upgrade</solucion>
+    </proceso2>
+     <proceso3>
+        <expresion>aaaaaa</expresion>
+        <solucion>sudo apt-get upgrade</solucion>
+    </proceso3>
+</problemas>
