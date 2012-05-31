@@ -48,7 +48,7 @@ public class RedesIII {
                 
                 
                 
-                m.ejecutar("ps -e");
+                
             
             
             
