@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package redesiii;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class Cliente implements Interfaz_Servidor_Cliente {
             this.puerto = puerto;
             InetAddress direccion = InetAddress.getByName(ip);
             
-            String direc = "rmi://" + ip + ":" + puerto + "/Cliente";
+            String direc = "rmi://" + ip + ":" + puerto + "/Servidor";
             servidor = (Interfaz_Cliente_Servidor) Naming.lookup(direc);
             
         } catch (NotBoundException ex) {
@@ -56,8 +56,8 @@ public class Cliente implements Interfaz_Servidor_Cliente {
     }
 
     @Override
-    public String verificar() {
-        return ejecutar("ps -e")[0];
+    public String[] verificar() {
+        return ejecutar("ps -e");
     }
 
     @Override
@@ -115,7 +115,7 @@ public static void main(String[] args){
 
                     
                    Naming.rebind("rmi://" + host + ":" + maquina.getPuerto() + "/Maquina", maquina);
-        
+                   
         } catch (MalformedURLException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
@@ -123,6 +123,8 @@ public static void main(String[] args){
         } catch (RemoteException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
    
     
 }

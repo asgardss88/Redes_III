@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package redesiii;
+
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -18,10 +18,12 @@ import java.util.logging.Logger;
 public class maquinaCliente {
     
     public Interfaz_Servidor_Cliente cliente;
+    public String ip;
     
     public maquinaCliente(String ip, int puerto){
         try {
-            cliente = (Interfaz_Servidor_Cliente) Naming.lookup("rmi://" + ip + ":" + puerto + "/Cliente");
+            this.ip = ip;
+            cliente = (Interfaz_Servidor_Cliente) Naming.lookup("rmi://" + ip + ":" + puerto + "/Maquina");
             
         } catch (NotBoundException ex) {
             Logger.getLogger(maquinaCliente.class.getName()).log(Level.SEVERE, null, ex);
@@ -31,6 +33,12 @@ public class maquinaCliente {
             Logger.getLogger(maquinaCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
     
+    }
+    
+    
+    public String[] verificarProcesos() throws RemoteException{
+    
+        return cliente.verificar();
     }
     
 }
