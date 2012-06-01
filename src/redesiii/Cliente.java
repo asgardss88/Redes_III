@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class Cliente implements Interfaz_Servidor_Cliente {
 
-    private Interfaz_Cliente_Servidor servidor; //La interfaz de comunicacion
+    public Interfaz_Cliente_Servidor servidor; //La interfaz de comunicacion
                                                 //con el servidor.
     private int puerto; // El puerto donde se desea establecer
                         //la conexion.
@@ -166,7 +166,7 @@ public static void main(String[] args){
 
                     
                    Naming.rebind("rmi://" + host + ":" + maquina.getPuerto() + "/Maquina", maquina);
-                   
+                   maquina.servidor.registrar();
         } catch (MalformedURLException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
