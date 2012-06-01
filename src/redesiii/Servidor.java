@@ -22,19 +22,21 @@ import java.util.logging.Logger;
  *
  * @author cef
  */
-public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Servidor{
-    
-    private ConcurrentHashMap<String,maquinaCliente> clientes;
-    private int puerto=1212;
+public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Servidor {
+
+    private ConcurrentHashMap<String, maquinaCliente> clientes;
+    private int puerto = 1212;
     public boolean active;
+    public static int salidaStd = 0;
+    public static int errorStd = 1;
+
     public Servidor() throws RemoteException {
         super();
-        
+
         clientes = new ConcurrentHashMap<String, maquinaCliente>();
-        active=true;
+        active = true;
     }
-    
-    
+
     /**
      * Permite la ejecucion de los metodos que definen las funcionalidades del
      * cliente. Ademas inicia el procesamiento y la deduccion de las acciones a
@@ -49,37 +51,62 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
             System.out.print("> ");
             String input = in.readLine();
             input = input.trim().toLowerCase();
+            InetAddress dir;
+            String arg;
 
             if (!input.isEmpty()) {
                 char opcion = input.charAt(0);
                 input = input.substring(1).trim();
-                
-                
-                
+
+
+
 
                 switch (opcion) {
 
                     case 'p':
-                        
-                        String arg = input.split("\\s+")[0];
-                        
-                        InetAddress dir = InetAddress.getByName(arg);
-                        
-                        if(clientes.containsKey(dir.getHostAddress())){
+
+                        arg = input.split("\\s+")[0];
+
+                        dir = InetAddress.getByName(arg);
+
+                        if (clientes.containsKey(dir.getHostAddress())) {
                             this.verificarProcesos(dir.getHostAddress());
-                        
-                        }else{
-                        
+
+                        } else {
+
                             System.out.println("Direccion de Host no registrada");
-                        
+
                         }
-   
-                        
+
+
                         break;
 
                     case 'e': //cerrar conexion y salir
                         System.out.println("Conexion finalizada exitosamente");
                         active = false;
+
+                        break;
+                        
+                    case 't':
+                        
+                        this.verificarTodas();
+                        
+                        break;
+                        
+                    case 'a':
+                        
+                        arg = input.split("\\s+")[0];
+
+                        dir = InetAddress.getByName(arg);
+
+                        if (clientes.containsKey(dir.getHostAddress())) {
+                            this.verificarActiva(dir.getHostAddress());
+
+                        } else {
+
+                            System.out.println("Direccion de Host no registrada");
+
+                        }
                         
                         break;
 
@@ -111,63 +138,85 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
 
     }
-    
-    
 
     @Override
     public void registrar() throws RemoteException {
         try {
-            
+
             String ip = getClientHost();
             maquinaCliente maquina_cliente = new maquinaCliente(ip, puerto);
-            
+
             clientes.put(ip, maquina_cliente);
-            
-             
+
+
         } catch (ServerNotActiveException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         }
-         
+
     }
-    
-    private void verificarProcesos(String ip){
+
+    private void verificarProcesos(String ip) {
         try {
             maquinaCliente c = clientes.get(ip);
-            
+
             String[] s = c.verificarProcesos();
-            
-            System.out.println("Salida Estandar de "+ip+" \n"+s[0]);
-            System.out.println("\nError Estandar de "+ip+" \n"+s[0]+"\n");
-            
+
+            System.out.println("Salida Estandar de " + ip + " \n" + s[salidaStd]);
+            System.out.println("\nError Estandar de " + ip + " \n" + s[errorStd] + "\n");
+
         } catch (RemoteException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-    
+
+
     }
-    
-    
-    
-  public static void main(String[] args){
+
+    private void verificarActiva(String ip) {
+
+        maquinaCliente c = clientes.get(ip);
+
+        if (c.verificarConexion()) {
+            System.out.println("Conexion con " + ip + " activa");
+        } else {
+
+            System.out.println("Se perdio conexion con " + ip);
+        }
+    }
+
+    private void verificarTodas() {
+        
+        for (ConcurrentHashMap.Entry<String, maquinaCliente> e : clientes.entrySet()) {
+            if (e.getValue().verificarConexion()) {
+                System.out.println("Conexion con " + e.getKey() + " activa");
+            } else {
+
+                System.out.println("Se perdio conexion con " + e.getKey());
+            }
+
+        }
+
+    }
+
+    public static void main(String[] args) {
         try {
             System.setProperty(
-                                "java.rmi.server.codebase",
-                                "file:" + System.getProperty("user.dir") + "/");
-                        Servidor server = new Servidor();        
-                        java.rmi.registry.LocateRegistry.createRegistry(server.puerto);
-                        String host = InetAddress.getLocalHost().toString().split("/")[1];
+                    "java.rmi.server.codebase",
+                    "file:" + System.getProperty("user.dir") + "/");
+            Servidor server = new Servidor();
+            java.rmi.registry.LocateRegistry.createRegistry(server.puerto);
+            String host = InetAddress.getLocalHost().toString().split("/")[1];
 
-                         
-                        Naming.rebind("rmi://" + host + ":" + server.puerto + "/Servidor", server);
-                        
-                       
-         while (server.active) {
-                         server.run();
-                        }
-         
-         System.exit(0);
 
-                        
+            Naming.rebind("rmi://" + host + ":" + server.puerto + "/Servidor", server);
+
+
+            while (server.active) {
+                server.run();
+            }
+
+            System.exit(0);
+
+
         } catch (MalformedURLException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
@@ -175,9 +224,9 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         } catch (RemoteException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-  
-  
-  }  
+
+
+
+
+    }
 }

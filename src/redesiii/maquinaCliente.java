@@ -5,7 +5,9 @@
 
 package redesiii;
 
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -40,6 +42,16 @@ public class maquinaCliente {
     public String[] verificarProcesos() throws RemoteException{
     
         return cliente.verificar();
+    }
+    
+    public boolean verificarConexion(){
+        try {
+            InetAddress.getByName(ip);
+            return true;
+        } catch (UnknownHostException ex) {
+           return false;
+        }
+        
     }
     
 }
