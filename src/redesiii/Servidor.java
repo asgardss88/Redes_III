@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package redesiii;
 
 import java.io.BufferedReader;
@@ -18,10 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author cef
- */
+
 public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Servidor {
 
     private ConcurrentHashMap<String, maquinaCliente> clientes;
@@ -39,10 +33,10 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
     /**
      * Permite la ejecucion de los metodos que definen las funcionalidades del
-     * cliente. Ademas inicia el procesamiento y la deduccion de las acciones a
+     * servido. Ademas inicia el procesamiento y la deduccion de las acciones a
      * tomar en cuanto a los diferentes tipos de solicitudes de servicio, a
      * partir de instrucciones insertadas por consola una vez iniciado el
-     * programa cliente.
+     * programa principal del servidor.
      *
      */
     public void run() {
@@ -138,7 +132,10 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
 
     }
-
+    /**
+     * 
+     * 
+     */
     @Override
     public void registrar() throws RemoteException {
         try {
@@ -197,6 +194,12 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
     }
 
+/**
+* Metodo principal de ejecucion del cliente.
+*
+* @param Un arreglo con los String que ingresaron por la entrada
+*        estandar.
+*/
     public static void main(String[] args) {
         try {
             System.setProperty(
