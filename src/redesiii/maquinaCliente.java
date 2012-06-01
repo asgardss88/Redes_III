@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 
+package redesiii;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
