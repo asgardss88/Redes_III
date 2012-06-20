@@ -1,4 +1,3 @@
-
 package redesiii;
 
 import java.io.BufferedReader;
@@ -123,13 +122,13 @@ public class Cliente implements Interfaz_Servidor_Cliente {
                     p.getErrorStream()));
 
             // Leemos la salida del comando
-            System.out.println("Ésta es la salida standard del comando:\n");
+            System.out.println("Esta es la salida standard del comando:\n");
             while ((s = stdInput.readLine()) != null) {
                 salida[0] += s + "\n";
             }
             System.out.println(salida[0]);
             // Leemos los errores si los hubiera
-            System.out.println("Ésta es la salida standard de error del comando (si la hay):\n");
+            System.out.println("Esta es la salida standard de error del comando (si la hay):\n");
             while ((s = stdError.readLine()) != null) {
 
                 salida[1] += s + "\n";
