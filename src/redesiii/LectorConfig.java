@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Enumeration;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.n3.nanoxml.IXMLElement;
@@ -70,6 +71,25 @@ public class LectorConfig {
                 
 //                System.out.println(c.getName());
  //              System.out.println(c.getContent() );
+            Vector v, c;
+            
+             e = xml.enumerateChildren();
+           while(e.hasMoreElements()){
+                v = ((IXMLElement)e.nextElement()).getChildren();
+                int n=0;
+               while(n<v.size()){
+                   System.out.println(((IXMLElement) v.get(n)).getName());
+                   c = ((IXMLElement)v.get(n)).getChildren();
+                   
+                   int i=0;
+                   while(i<c.size()){
+                       System.out.println("\t"+((IXMLElement) c.get(i)).getName());
+                       i++;
+                   }
+                   n++;
+               
+               }
+            }
             
             
                 

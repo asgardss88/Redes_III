@@ -3,27 +3,27 @@
     <proceso1>
         <caso>
             <solucion>sudo apt-get upgrade</solucion>
-            <normal>aaaaaa</normal>
-            <error>aaaaaa</error>
+            <normal>a0</normal>
+            <error>e0</error>
         </caso>
     </proceso1>
     <proceso2>
         <caso>
             <solucion>sudo apt-get upgrade</solucion>
-            <normal>aaaaaa</normal>
-            <error>aaaaaa</error>
+            <normal>a1</normal>
+            <error>e1</error>
         </caso>
         <caso>
             <solucion>sudo apt-get upgrade</solucion>
-            <normal>aaaaaa</normal>
-            <error>aaaaaa</error>
+            <normal>a2</normal>
+            <error>e2</error>
         </caso>
     </proceso2>
     <proceso3>
         <caso>
             <solucion>sudo apt-get upgrade</solucion>
-            <normal>aaaaaa</normal>
-            <error>aaaaaa</error>
+            <normal>a3</normal>
+            <error>e3</error>
         </caso>
     </proceso3>
 </problemas>
