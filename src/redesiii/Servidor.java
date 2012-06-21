@@ -170,8 +170,10 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         arg = input.split("\\s+")[0];
 
                         dir = InetAddress.getByName(arg);
+                      
 
                         if (clientes.containsKey(dir.getHostAddress())) {
+                           
                             this.verificarActiva(dir.getHostAddress());
 
                         } else {
@@ -184,8 +186,12 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
 
                     case 'h': // imprimir ayuda
-                        System.out.println("Opciones: \nS|s\ne|E\n"
-                                + "d|D <link>[,<link>,...]\nh|H\n");
+                        System.out.println("AYUDA:");
+                        System.out.println("p <host>: \tPermite listar los procesos que estan corriendo en un determinado host ");
+                        System.out.println("a <host>: \tPermite verificar la conexion con un host en especifico");
+                        System.out.println("t: \t Permite verificar todas las conexiones con todos los host");
+                        System.out.println("s: \t Permite activar el modo de servidor de verificacion automatica");
+                        System.out.println("e: \t Cerrar la conexion.");
                         break;
 
                     case 'l':
