@@ -19,7 +19,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.n3.nanoxml.*;
 
-
 public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Servidor {
 
     private ConcurrentHashMap<String, maquinaCliente> clientes;
@@ -28,55 +27,59 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     public boolean active;
     public static int salidaStd = 0;
     public static int errorStd = 1;
+    public String mail;
+    public String password;
 
     public Servidor() throws RemoteException {
         super();
 
         clientes = new ConcurrentHashMap<String, maquinaCliente>();
-        config= new ConcurrentHashMap<String, LinkedList<Caso>>();
+        config = new ConcurrentHashMap<String, LinkedList<Caso>>();
         active = true;
+        mail = "redesiii2012@gmail.com";
+        password = "claveclave";
         procesarConfiguracion();
     }
-    
-        /**
-         * Permite leer el archivo de configuracion 'config.xml' que permite
-         * definir soluciones y descripcion de flujos.
-         * 
-         */
-        private void procesarConfiguracion(){
+
+    /**
+     * Permite leer el archivo de configuracion 'config.xml' que permite
+     * definir soluciones y descripcion de flujos.
+     * 
+     */
+    private void procesarConfiguracion() {
         try {
-            
-            
-            IXMLParser parser= XMLParserFactory.createDefaultXMLParser();
-            IXMLReader reader= StdXMLReader.fileReader(System.getProperty("user.dir")+"/src/redesiii/config.xml");
+
+
+            IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+            IXMLReader reader = StdXMLReader.fileReader(System.getProperty("user.dir") + "/src/redesiii/config.xml");
             parser.setReader(reader);
             IXMLElement xml = (IXMLElement) parser.parse();
             Enumeration e = xml.enumerateChildren();
-            
-             Vector v, c;
-             IXMLElement proc, caso;
-            
-             
-           while(e.hasMoreElements()){
-                proc = (IXMLElement)e.nextElement();
+
+            Vector v, c;
+            IXMLElement proc, caso;
+
+
+            while (e.hasMoreElements()) {
+                proc = (IXMLElement) e.nextElement();
                 v = proc.getChildren();
-                int n=0;
+                int n = 0;
                 LinkedList<Caso> list = new LinkedList<Caso>();
-               while(n<v.size()){
-                   caso = (IXMLElement)v.get(n);
-                   
-                   Caso ca = new Caso(((IXMLElement) caso.getChildrenNamed("solucion").get(0)).getContent(), ((IXMLElement) caso.getChildrenNamed("normal").get(0)).getContent(), ((IXMLElement) caso.getChildrenNamed("error").get(0)).getContent());
-                   list.add(ca);
-                   n++;
-               
-               }
-               config.put(proc.getName(), list);
+                while (n < v.size()) {
+                    caso = (IXMLElement) v.get(n);
+
+                    Caso ca = new Caso(((IXMLElement) caso.getChildrenNamed("solucion").get(0)).getContent(), ((IXMLElement) caso.getChildrenNamed("normal").get(0)).getContent(), ((IXMLElement) caso.getChildrenNamed("error").get(0)).getContent());
+                    list.add(ca);
+                    n++;
+
+                }
+                config.put(proc.getName(), list);
             }
-           
-          
-           
-            
-            
+
+
+
+
+
         } catch (XMLException ex) {
             Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FileNotFoundException ex) {
@@ -90,8 +93,8 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         } catch (IllegalAccessException ex) {
             Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-    
+
+
     }
 
     /**
@@ -127,7 +130,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         dir = InetAddress.getByName(arg);
 
                         if (clientes.containsKey(dir.getHostAddress())) {
-                            this.verificarProcesos(dir.getHostAddress());
+                            this.listarProcesosCliente(dir.getHostAddress());
 
                         } else {
 
@@ -143,15 +146,15 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         active = false;
 
                         break;
-                        
+
                     case 't':
-                        
+
                         this.verificarTodas();
-                        
+
                         break;
-                        
+
                     case 'a':
-                        
+
                         arg = input.split("\\s+")[0];
 
                         dir = InetAddress.getByName(arg);
@@ -164,13 +167,17 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                             System.out.println("Direccion de Host no registrada");
 
                         }
-                        
+
                         break;
 
 
                     case 'h': // imprimir ayuda
                         System.out.println("Opciones: \nS|s\ne|E\n"
                                 + "d|D <link>[,<link>,...]\nh|H\n");
+                        break;
+
+                    case 's':
+
                         break;
 
                     default:
@@ -195,6 +202,73 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
 
     }
+
+    public void activarModoServidor(int seg) {
+        boolean continuar = true;
+        boolean sinreparo = true;
+        LinkedList<String> ps;
+        LinkedList<Caso> casos;
+        String[] salida;
+        String errores;
+
+        while (continuar) {
+            try {
+                Thread.sleep(seg * 1000);
+
+                for (maquinaCliente mc : clientes.values()) {
+
+                    ps = mc.verificarProcesos();
+
+                    for (String p : ps) {
+
+                        casos = config.get(p);
+                        errores="";
+
+                        for (Caso c : casos) {
+
+                            salida = mc.ejecutar(c.solucion);
+
+                            if (salida[errorStd].compareTo("") == 0) {
+
+                                if (salida[salidaStd].matches(c.flujonormal)) {
+
+                                    sinreparo = false;
+                                    break;
+                                }
+
+
+                            }else{
+                            
+                                errores+=salida[errorStd]+"\n";
+                            }
+
+
+                        }
+                        
+                        if(sinreparo){
+                            String msj = "Encontrado problema al intentar levantar "+p+" y se encontraron los siguientes errores:\n"+errores;
+                            Correo correo =  new Correo(msj,"Error al levantar servicio",mail,password);
+                        
+                        }
+
+
+                    }
+
+
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+
+        }
+
+
+    }
+
     /**
      * 
      * 
@@ -215,11 +289,11 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
     }
 
-    private void verificarProcesos(String ip) {
+    private void listarProcesosCliente(String ip) {
         try {
             maquinaCliente c = clientes.get(ip);
 
-            String[] s = c.verificarProcesos();
+            String[] s = c.listarProcesos();
 
             System.out.println("Salida Estandar de " + ip + " \n" + s[salidaStd]);
             System.out.println("\nError Estandar de " + ip + " \n" + s[errorStd] + "\n");
@@ -244,7 +318,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     }
 
     private void verificarTodas() {
-        
+
         for (ConcurrentHashMap.Entry<String, maquinaCliente> e : clientes.entrySet()) {
             if (e.getValue().verificarConexion()) {
                 System.out.println("Conexion con " + e.getKey() + " activa");
@@ -257,12 +331,12 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
     }
 
-/**
-* Metodo principal de ejecucion del cliente.
-*
-* @param Un arreglo con los String que ingresaron por la entrada
-*        estandar.
-*/
+    /**
+     * Metodo principal de ejecucion del cliente.
+     *
+     * @param Un arreglo con los String que ingresaron por la entrada
+     *        estandar.
+     */
     public static void main(String[] args) {
         try {
             System.setProperty(

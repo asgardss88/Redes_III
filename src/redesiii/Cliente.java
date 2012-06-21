@@ -1,6 +1,8 @@
 package redesiii;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -51,6 +53,8 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
             
             procesos = new LinkedList<String>();
             
+            this.leerProcesos("process");
+            
         } catch (NotBoundException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MalformedURLException ex) {
@@ -96,7 +100,7 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
      */
     @Override
     public String[] verificar() {
-        return ejecutar("ps -e");
+        return ejecutar("ps -eo fname");
     }
     /**
      * Este metodo permite ejecutar un script de bash en una instacia
@@ -151,6 +155,30 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
             System.exit(0);
         }
         return salida;
+    }
+    
+    public void leerProcesos(String arch) {
+        try {
+            BufferedReader buffer = new BufferedReader(new FileReader(System.getProperty("user.dir")+"/src/redesiii/"+arch));
+
+            String linea;
+            try {
+                while ((linea = buffer.readLine()) != null) {
+                    if (!linea.matches("\\s*")) { //se ignora lineas en blanco
+
+                        procesos.add(linea);
+                      
+
+                    }
+                }
+            } catch (IOException ex) {
+                System.out.println("Error de lectura sobre el archivo " + arch);
+                System.exit(-1);
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("Error al intentar abrir el archivo" + arch);
+            System.exit(-1);
+        }
     }
     
     /**
@@ -219,7 +247,7 @@ public static void main(String[] args){
 
                     
                    Naming.rebind("rmi://" + host + ":" + maquina.getPuerto() + "/Maquina", maquina);
-                   maquina.servidor.registrar();
+                  // maquina.servidor.registrar();
         } catch (MalformedURLException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {

@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,10 +34,19 @@ public class maquinaCliente {
     
     }
     
+    public String[] ejecutar(String script) throws RemoteException{
     
-    public String[] verificarProcesos() throws RemoteException{
+        return cliente.ejecutar(script);
+    }
+    
+    public String[] listarProcesos() throws RemoteException{
     
         return cliente.verificar();
+    }
+    
+    public LinkedList<String> verificarProcesos() throws RemoteException{
+    
+        return cliente.verificarProcesos();
     }
     
     public boolean verificarConexion(){
