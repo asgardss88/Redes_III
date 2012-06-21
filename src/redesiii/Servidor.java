@@ -31,6 +31,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     public String password;
     public int retardo;
     public static String path_config;
+    
 
     public Servidor() throws RemoteException {
         super();
@@ -228,13 +229,15 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         LinkedList<Caso> casos;
         String[] salida;
         String errores;
+        String msj;
 
         while (continuar) {
             try {
                 Thread.sleep(retardo * 1000);
 
                 for (maquinaCliente mc : clientes.values()) {
-
+                    
+                 if(mc.verificarConexion()){   
                     ps = mc.verificarProcesos();
 
                     for (String p : ps) {
@@ -264,13 +267,21 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         }
 
                         if (sinreparo) {
-                            String msj = "Encontrado problema al intentar levantar " + p + " y se encontraron los siguientes errores:\n" + errores;
+                            msj = "Encontrado problema al intentar levantar " + p + " y se encontraron los siguientes errores:\n" + errores;
                             Correo correo = new Correo(msj, "Error al levantar servicio", mail, password);
                             correo.enviar();
                         }
 
 
                     }
+                 
+                 }else{
+                     clientes.remove(mc.ip);
+                     msj="No se pudo establecer conexion con "+mc.ip+" revise si el equipo esta encendido o si hay algun problema en la red";
+                     Correo correo = new Correo(msj, "Problema estableciendo conexion", mail, password);
+                     correo.enviar();
+                 
+                 }
 
 
                 }
@@ -314,7 +325,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
             String[] s = c.listarProcesos();
 
             System.out.println("Salida Estandar de " + ip + " \n" + s[salidaStd]);
-            System.out.println("\nError Estandar de " + ip + " \n" + s[errorStd] + "\n");
+          
 
         } catch (RemoteException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
@@ -332,6 +343,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         } else {
 
             System.out.println("Se perdio conexion con " + ip);
+            clientes.remove(ip);
         }
     }
 
@@ -343,6 +355,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
             } else {
 
                 System.out.println("Se perdio conexion con " + e.getKey());
+                clientes.remove(e.getKey());
             }
 
         }
