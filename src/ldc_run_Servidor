@@ -1,4 +1,4 @@
 DIR="$(pwd)/"
 ARGS="$(pwd)/redesiii/config.xml"
-/home/edward/BARRA_LDC/TESIS/jdk1.7.0_03/bin/java -Dfile.encoding=UTF-8 -classpath ${DIR}redesiii/nanoxml-2.2.3.jar:${DIR} redesiii/Servidor ${ARGS}
+/home/edward/BARRA_LDC/TESIS/jdk1.7.0_03/bin/java -Dfile.encoding=UTF-8 -classpath ${DIR}:${DIR}redesiii/nanoxml-2.2.3.jar:${DIR}redesiii/mail.jar redesiii/Servidor ${ARGS}
 
