@@ -179,6 +179,17 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         System.out.println("Opciones: \nS|s\ne|E\n"
                                 + "d|D <link>[,<link>,...]\nh|H\n");
                         break;
+                        
+                    case 'l':
+                        Enumeration e = clientes.keys();
+                        while(e.hasMoreElements()){
+                            
+                            System.out.println("Host "+((String)e.nextElement()));
+                        
+                        
+                        }
+                        System.out.println("");
+                        break;
 
                     case 's':
                         activarModoServidor();
