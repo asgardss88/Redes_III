@@ -50,13 +50,18 @@ public class maquinaCliente {
     }
     
     public boolean verificarConexion(){
-        try {
-            InetAddress.getByName(ip);
-            return true;
-        } catch (UnknownHostException ex) {
-           return false;
-        }
+        
+            try {
+                cliente.verificarConexion();
+                return true;
+                
+                
+            } catch (RemoteException ex) {
+                return false;
+            }
+            
+        
         
     }
-    
-}
+}    
+

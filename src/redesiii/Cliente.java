@@ -71,6 +71,12 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
     }
     
     
+    public boolean verificarConexion(){
+    
+        return true;
+    }
+    
+    
     /**
      * Este metodo permite obtener el numero de puerto de donde se establece
      * la conexion.
