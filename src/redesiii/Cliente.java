@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
  * @author Cesar Freitas.
  * @author Edward Zambrano.
  */
-public class Cliente implements Interfaz_Servidor_Cliente {
+public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cliente {
 
     public Interfaz_Cliente_Servidor servidor; //La interfaz de comunicacion
                                                 //con el servidor.
@@ -37,7 +38,7 @@ public class Cliente implements Interfaz_Servidor_Cliente {
      * @param puerto Un entero que representa el numero de puerto donde se va
      *        a establecer la conexion.
      */
-    public Cliente(String ip, int puerto) {
+    public Cliente (String ip, int puerto) throws RemoteException {
         try {
             this.puerto = puerto;
             InetAddress direccion = InetAddress.getByName(ip);
@@ -53,7 +54,7 @@ public class Cliente implements Interfaz_Servidor_Cliente {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
        
         
     }
