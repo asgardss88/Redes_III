@@ -46,6 +46,6 @@ public interface Interfaz_Servidor_Cliente extends Remote {
      * 
      * @return Una lista con los nombres de los procesos inactivos.
      */
-    public LinkedList<String> verificarProcesos();
+    public LinkedList<String> verificarProcesos() throws RemoteException;
     
 }
