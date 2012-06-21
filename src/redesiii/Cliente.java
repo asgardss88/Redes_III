@@ -249,7 +249,7 @@ public static void main(String[] args){
 
                     
                    Naming.rebind("rmi://" + host + ":" + maquina.getPuerto() + "/Maquina", maquina);
-                  // maquina.servidor.registrar();
+                   maquina.servidor.registrar();
         } catch (MalformedURLException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnknownHostException ex) {
