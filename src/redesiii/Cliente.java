@@ -32,6 +32,8 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
                                                 //con el servidor.
     private int puerto; // El puerto donde se desea establecer
                         //la conexion.
+
+    public static String process_path;
     
     private LinkedList<String> procesos;
     /**
@@ -159,7 +161,7 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
     
     public void leerProcesos(String arch) {
         try {
-            BufferedReader buffer = new BufferedReader(new FileReader(System.getProperty("user.dir")+"/src/redesiii/"+arch));
+            BufferedReader buffer = new BufferedReader(new FileReader(process_path));
 
             String linea;
             try {
@@ -237,7 +239,7 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
 */
 public static void main(String[] args){
         try {
-            
+	process_path = args[2];            
             System.setProperty(
                            "java.rmi.server.codebase",
                            "file:" + System.getProperty("user.dir") + "/");

@@ -30,6 +30,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     public String mail;
     public String password;
     public int retardo;
+    public static String path_config;
 
     public Servidor() throws RemoteException {
         super();
@@ -54,7 +55,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
 
             IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-            IXMLReader reader = StdXMLReader.fileReader(System.getProperty("user.dir") + "/src/redesiii/config.xml");
+            IXMLReader reader = StdXMLReader.fileReader(Servidor.path_config);
             parser.setReader(reader);
             IXMLElement xml = (IXMLElement) parser.parse();
             Enumeration e = xml.enumerateChildren();
@@ -342,6 +343,8 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
      */
     public static void main(String[] args) {
         try {
+
+	path_config = args[0];
             System.setProperty(
                     "java.rmi.server.codebase",
                     "file:" + System.getProperty("user.dir") + "/");
