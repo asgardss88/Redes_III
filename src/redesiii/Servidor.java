@@ -42,7 +42,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         password = "claveclave";
         retardo = 5;
         procesarConfiguracion();
-        
+
     }
 
     /**
@@ -179,22 +179,25 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         System.out.println("Opciones: \nS|s\ne|E\n"
                                 + "d|D <link>[,<link>,...]\nh|H\n");
                         break;
-                        
+
                     case 'l':
                         Enumeration e = clientes.keys();
-                        while(e.hasMoreElements()){
-                            
-                            System.out.println("Host "+((String)e.nextElement()));
-                        
-                        
+                        if (e.hasMoreElements()) {
+                            while (e.hasMoreElements()) {
+
+                                System.out.println("Host " + ((String) e.nextElement()));
+
+
+                            }
+                        } else {
+                            System.out.println("No hay host registrados.");
                         }
-                        System.out.println("");
                         break;
 
                     case 's':
                         activarModoServidor();
                         break;
-                            
+
                     default:
                         System.out.println("Error Opcion invalida");
                         run();
@@ -237,7 +240,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                     for (String p : ps) {
 
                         casos = config.get(p);
-                        errores="";
+                        errores = "";
 
                         for (Caso c : casos) {
 
@@ -252,17 +255,17 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                                 }
 
 
-                            }else{
-                            
-                                errores+=salida[errorStd]+"\n";
+                            } else {
+
+                                errores += salida[errorStd] + "\n";
                             }
 
 
                         }
-                        
-                        if(sinreparo){
-                            String msj = "Encontrado problema al intentar levantar "+p+" y se encontraron los siguientes errores:\n"+errores;
-                            Correo correo =  new Correo(msj,"Error al levantar servicio",mail,password);
+
+                        if (sinreparo) {
+                            String msj = "Encontrado problema al intentar levantar " + p + " y se encontraron los siguientes errores:\n" + errores;
+                            Correo correo = new Correo(msj, "Error al levantar servicio", mail, password);
                             correo.enviar();
                         }
 
@@ -355,7 +358,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     public static void main(String[] args) {
         try {
 
-	path_config = args[0];
+            path_config = args[0];
             System.setProperty(
                     "java.rmi.server.codebase",
                     "file:" + System.getProperty("user.dir") + "/");
