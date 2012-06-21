@@ -131,15 +131,24 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                     case 'p':
 
                         arg = input.split("\\s+")[0];
-                        
+                        maquinaCliente m;
                         
                         
                         dir = InetAddress.getByName(arg);
+                        
 
-                        if (clientes.containsKey(dir.getHostAddress()) && validarConexion(arg)) {
+                        if (clientes.containsKey(dir.getHostAddress())) {
                             
+                           m= clientes.get(dir.getHostAddress());
+                            if(m.verificarConexion()){
                             
-                            this.listarProcesosCliente(dir.getHostAddress());
+                                this.listarProcesosCliente(dir.getHostAddress());
+                            
+                            }else{
+                                System.out.println("Se perdio conexion con " + dir.getHostAddress());
+                                clientes.remove(dir.getHostAddress());
+                            
+                            }
 
                         } else {
 
@@ -236,15 +245,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     }
     
     
-    public boolean validarConexion(String host){
-        try {
-            InetAddress.getByName(host);
-            return true;
-        } catch (UnknownHostException ex) {
-           return false;
-        }
     
-    }
 
     public void activarModoServidor() {
         boolean continuar = true;
