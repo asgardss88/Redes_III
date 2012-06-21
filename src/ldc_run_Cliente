@@ -1,0 +1,4 @@
+DIR="$(pwd)/"
+ARGS="titan 1212 $(pwd)/redesiii/process"
+/home/edward/BARRA_LDC/TESIS/jdk1.7.0_03/bin/java -Dfile.encoding=UTF-8 -classpath ${DIR}redesiii/nanoxml-2.2.3.jar:${DIR} redesiii/Cliente ${ARGS}
+

@@ -1,4 +1,4 @@
-CLASSPATH="$(CURDIR)/redesiii/nanoxml-2.2.3.jar:"
+CLASSPATH="$(CURDIR)/redesiii/nanoxml-2.2.3.jar:$(CURDIR)/redesiii/mail.jar:"
 JFLAGS = -g -cp $(CLASSPATH)
 JC = /home/edward/BARRA_LDC/TESIS/jdk1.7.0_03/bin/javac
 #JC = javac
@@ -9,8 +9,10 @@ JC = /home/edward/BARRA_LDC/TESIS/jdk1.7.0_03/bin/javac
 
 CLASSES = \
 	redesiii/Cliente.java \
+	redesiii/Servidor.java \
 	redesiii/Interfaz_Cliente_Servidor.java \
 	redesiii/Caso.java \
+	redesiii/Correo.java \
 	redesiii/LectorConfig.java \
 	redesiii/maquinaCliente.java \
 	redesiii/Prueba.java \
