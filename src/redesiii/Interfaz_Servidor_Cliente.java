@@ -6,6 +6,7 @@ package redesiii;
  */
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 
 /**
  *
@@ -37,5 +38,14 @@ public interface Interfaz_Servidor_Cliente extends Remote {
      * 
      */
     public String[] ejecutar(String script) throws RemoteException;
+    
+    /**
+     * Este metodo permite proporcionar al servidor la lista de los
+     * procesos criticos que se encuentran inactivos en la maquina
+     * cliente.
+     * 
+     * @return Una lista con los nombres de los procesos inactivos.
+     */
+    public LinkedList<String> verificarProcesos();
     
 }

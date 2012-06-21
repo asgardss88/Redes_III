@@ -33,6 +33,7 @@ import net.n3.nanoxml.XMLParserFactory;
 public class Prueba {
     
     public LinkedList<String> procesos;
+     private ConcurrentHashMap<String, LinkedList<Caso>> config= new ConcurrentHashMap<String, LinkedList<Caso>>();
 
     public Prueba() {
         procesos = new LinkedList<String>();
@@ -45,9 +46,8 @@ public class Prueba {
             
             
             
-            ConcurrentHashMap<String, LinkedList<Caso>> config= new ConcurrentHashMap<String, LinkedList<Caso>>();
             IXMLParser parser= XMLParserFactory.createDefaultXMLParser();
-            IXMLReader reader= StdXMLReader.fileReader(System.getProperty("user.dir")+"/src/redesiii/NewFile.xml");
+            IXMLReader reader= StdXMLReader.fileReader(System.getProperty("user.dir")+"/src/redesiii/config.xml");
             parser.setReader(reader);
             IXMLElement xml = (IXMLElement) parser.parse();
             Enumeration e = xml.enumerateChildren();
@@ -169,7 +169,7 @@ public class Prueba {
     }
     
     
-    public void verificarProcesos(){
+    public LinkedList<String> verificarProcesos(){
     
         String[] salidas = this.ejecutar("ps -eo fname");
         
@@ -212,7 +212,7 @@ public class Prueba {
         }
         
         
-        
+        return falta;
     
     }
     

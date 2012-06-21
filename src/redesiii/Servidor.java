@@ -1,6 +1,7 @@
 package redesiii;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -10,14 +11,19 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.n3.nanoxml.*;
 
 
 public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Servidor {
 
     private ConcurrentHashMap<String, maquinaCliente> clientes;
+    private ConcurrentHashMap<String, LinkedList<Caso>> config;
     private int puerto = 1212;
     public boolean active;
     public static int salidaStd = 0;
@@ -27,7 +33,65 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         super();
 
         clientes = new ConcurrentHashMap<String, maquinaCliente>();
+        config= new ConcurrentHashMap<String, LinkedList<Caso>>();
         active = true;
+        procesarConfiguracion();
+    }
+    
+        /**
+         * Permite leer el archivo de configuracion 'config.xml' que permite
+         * definir soluciones y descripcion de flujos.
+         * 
+         */
+        private void procesarConfiguracion(){
+        try {
+            
+            
+            IXMLParser parser= XMLParserFactory.createDefaultXMLParser();
+            IXMLReader reader= StdXMLReader.fileReader(System.getProperty("user.dir")+"/src/redesiii/config.xml");
+            parser.setReader(reader);
+            IXMLElement xml = (IXMLElement) parser.parse();
+            Enumeration e = xml.enumerateChildren();
+            
+             Vector v, c;
+             IXMLElement proc, caso;
+            
+             
+           while(e.hasMoreElements()){
+                proc = (IXMLElement)e.nextElement();
+                v = proc.getChildren();
+                int n=0;
+                LinkedList<Caso> list = new LinkedList<Caso>();
+               while(n<v.size()){
+                   caso = (IXMLElement)v.get(n);
+                   
+                   Caso ca = new Caso(((IXMLElement) caso.getChildrenNamed("solucion").get(0)).getContent(), ((IXMLElement) caso.getChildrenNamed("normal").get(0)).getContent(), ((IXMLElement) caso.getChildrenNamed("error").get(0)).getContent());
+                   list.add(ca);
+                   n++;
+               
+               }
+               config.put(proc.getName(), list);
+            }
+           
+          
+           
+            
+            
+        } catch (XMLException ex) {
+            Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(Prueba.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    
     }
 
     /**

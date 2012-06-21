@@ -10,6 +10,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +30,8 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
                                                 //con el servidor.
     private int puerto; // El puerto donde se desea establecer
                         //la conexion.
+    
+    private LinkedList<String> procesos;
     /**
      * Constructor de la clase Cliente, esta permite inicializar todos 
      * los parametros necesarios para su funcionamiento.
@@ -45,6 +48,8 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
             
             String direc = "rmi://" + ip + ":" + puerto + "/Servidor";
             servidor = (Interfaz_Cliente_Servidor) Naming.lookup(direc);
+            
+            procesos = new LinkedList<String>();
             
         } catch (NotBoundException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
@@ -106,7 +111,7 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
     @Override
     public String[] ejecutar(String script) {
 
-        String s = null;
+        String s;
         String[] salida = new String[2];
         salida[0] = "";
         salida[1] = "";
@@ -146,6 +151,54 @@ public class Cliente extends UnicastRemoteObject implements Interfaz_Servidor_Cl
             System.exit(0);
         }
         return salida;
+    }
+    
+    /**
+     * Este metodo permite proporcionar al servidor la lista de los
+     * procesos criticos que se encuentran inactivos en la maquina
+     * cliente.
+     * 
+     * @return Una lista con los nombres de los procesos inactivos.
+     */
+    @Override
+     public LinkedList<String> verificarProcesos(){
+    
+        String[] salidas = this.ejecutar("ps -eo fname");
+        
+        String[] separado = salidas[0].split("\n");
+        int n;
+        
+        
+        LinkedList<String> falta = new LinkedList();
+        
+        for(String p:procesos){
+            n=1;
+            
+            while(n<separado.length){
+                
+                if(separado[n].compareTo(p)==0){
+                    System.out.println(p+" encontrado");
+                    break;
+                    
+                }
+                n++;
+            }
+            
+            if(n>=separado.length){
+                
+                falta.addLast(p);
+            }
+        }
+        
+        for(String x:falta){
+        
+            System.out.println("no encontrado "+x);
+        
+        }
+        
+        
+        return falta;
+    
     }
 
 /**
