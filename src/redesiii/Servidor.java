@@ -29,6 +29,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     public static int errorStd = 1;
     public String mail;
     public String password;
+    public int retardo;
 
     public Servidor() throws RemoteException {
         super();
@@ -38,7 +39,9 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         active = true;
         mail = "redesiii2012@gmail.com";
         password = "claveclave";
+        retardo = 5;
         procesarConfiguracion();
+        
     }
 
     /**
@@ -177,9 +180,9 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         break;
 
                     case 's':
-
+                        activarModoServidor();
                         break;
-
+                            
                     default:
                         System.out.println("Error Opcion invalida");
                         run();
@@ -203,7 +206,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
     }
 
-    public void activarModoServidor(int seg) {
+    public void activarModoServidor() {
         boolean continuar = true;
         boolean sinreparo = true;
         LinkedList<String> ps;
@@ -213,7 +216,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
         while (continuar) {
             try {
-                Thread.sleep(seg * 1000);
+                Thread.sleep(retardo * 1000);
 
                 for (maquinaCliente mc : clientes.values()) {
 
@@ -248,7 +251,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         if(sinreparo){
                             String msj = "Encontrado problema al intentar levantar "+p+" y se encontraron los siguientes errores:\n"+errores;
                             Correo correo =  new Correo(msj,"Error al levantar servicio",mail,password);
-                        
+                            correo.enviar();
                         }
 
 
