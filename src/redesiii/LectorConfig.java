@@ -29,7 +29,7 @@ public class LectorConfig {
     
     private IXMLElement xml;
     
-    public LectorConfig(String path){
+    public LectorConfig(String path) throws ClassNotFoundException{
         try {
             IXMLParser parser= XMLParserFactory.createDefaultXMLParser();
            IXMLReader reader= StdXMLReader.fileReader(path);
@@ -37,17 +37,7 @@ public class LectorConfig {
            xml = (IXMLElement) parser.parse();
            
            
-        } catch (XMLException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        } catch (XMLException | InstantiationException | IllegalAccessException | IOException ex) {
             Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -93,25 +83,8 @@ public class LectorConfig {
                }
             }
             
-            
-                
-                
-                
-                
-            
-            
-            
-        } catch (XMLException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
+        
+        } catch (XMLException | ClassNotFoundException | InstantiationException | IllegalAccessException | IOException ex) {
             Logger.getLogger(LectorConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
         

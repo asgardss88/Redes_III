@@ -6,6 +6,7 @@ package redesiii;
  */
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 
 /**
  *
@@ -13,6 +14,8 @@ import java.rmi.RemoteException;
  */
 public interface Interfaz_Cliente_Servidor extends Remote  {
     
-    public void registrar() throws RemoteException;
+    public LinkedList<String> registrar() throws RemoteException;
+    
+    public boolean chequear_conexion () throws RemoteException;
     
 }

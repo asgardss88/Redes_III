@@ -1,8 +1,6 @@
 package redesiii;
 
-import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -18,17 +16,15 @@ public class maquinaCliente {
     
     public Interfaz_Servidor_Cliente cliente;
     public String ip;
+    public LinkedList<String> procesos_caidos;
     
     public maquinaCliente(String ip, int puerto){
         try {
             this.ip = ip;
             cliente = (Interfaz_Servidor_Cliente) Naming.lookup("rmi://" + ip + ":" + puerto + "/Maquina");
+            procesos_caidos = new LinkedList<>();
             
-        } catch (NotBoundException ex) {
-            Logger.getLogger(maquinaCliente.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(maquinaCliente.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RemoteException ex) {
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(maquinaCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
     

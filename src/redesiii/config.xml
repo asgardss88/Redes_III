@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <problemas>
-    <proceso1>
+    <nfsd>
         <caso>
-            <solucion>sudo apt-get upgrade</solucion>
-            <normal>a0</normal>
+            <solucion>echo hola</solucion>
+            <normal>hola</normal>
             <error>e0</error>
         </caso>
-    </proceso1>
+    </nfsd>
     <proceso2>
         <caso>
             <solucion>sudo apt-get upgrade</solucion>

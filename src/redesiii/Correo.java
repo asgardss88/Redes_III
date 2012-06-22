@@ -2,6 +2,8 @@
 package redesiii;
 
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -19,6 +21,7 @@ public class Correo {
     public String asunto;
     public String destino;
     public String pass;
+    public static final Logger logger = Logger.getLogger(Servidor.class.getName());
 
     public Correo(String mensaje, String asunto, String destino, String pass) {
         this.mensaje = mensaje;
@@ -63,7 +66,7 @@ public class Correo {
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Correo.logger.log(Level.SEVERE, null, e);
         }
     
     

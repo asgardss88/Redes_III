@@ -1,6 +1,2 @@
-dhclient
-init
-cpuset
 nfsd
-portmap
-
+dhclient2

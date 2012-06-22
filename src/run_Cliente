@@ -1,0 +1,4 @@
+DIR="$(pwd)/"
+ARGS="localhost 1212 $(pwd)/redesiii/process"
+java -Dfile.encoding=UTF-8 -classpath ${DIR}redesiii/nanoxml-2.2.3.jar:${DIR} redesiii/Cliente ${ARGS}
+

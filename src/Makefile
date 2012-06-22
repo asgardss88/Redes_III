@@ -1,7 +1,7 @@
 CLASSPATH="$(CURDIR)/redesiii/nanoxml-2.2.3.jar:$(CURDIR)/redesiii/mail.jar:"
 JFLAGS = -g -cp $(CLASSPATH)
-JC = /home/edward/BARRA_LDC/TESIS/jdk1.7.0_03/bin/javac
-#JC = javac
+#JC = /home/edward/BARRA_LDC/TESIS/jdk1.7.0_03/bin/javac
+JC = javac
 
 .SUFFIXES: .java .class
 .java.class:

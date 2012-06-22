@@ -51,4 +51,6 @@ public interface Interfaz_Servidor_Cliente extends Remote {
     
     public boolean verificarConexion() throws RemoteException;
     
+    public void terminar_conexion() throws RemoteException;
+    
 }
