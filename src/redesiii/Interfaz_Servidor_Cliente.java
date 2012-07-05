@@ -48,6 +48,7 @@ public interface Interfaz_Servidor_Cliente extends Remote {
      */
     public LinkedList<String> verificarProcesos() throws RemoteException;
     
+    public LinkedList<String> procesos_vigilados()throws RemoteException;
     
     public boolean verificarConexion() throws RemoteException;
     

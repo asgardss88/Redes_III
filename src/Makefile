@@ -16,7 +16,9 @@ CLASSES = \
 	redesiii/LectorConfig.java \
 	redesiii/maquinaCliente.java \
 	redesiii/Prueba.java \
-	redesiii/Interfaz_Servidor_Cliente.java
+	redesiii/Interfaz_Servidor_Cliente.java \
+	redesiii/servidor_web.java \
+	redesiii/servidor_web_starter.java
 
 default: classes
 

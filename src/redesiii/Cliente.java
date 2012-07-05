@@ -30,7 +30,7 @@ public final class Cliente extends UnicastRemoteObject implements Interfaz_Servi
     private int puerto; // El puerto donde se desea establecer
     //la conexion.
     public static String process_path;
-    private LinkedList<String> procesos;
+    public LinkedList<String> procesos;
     public static final Logger logger = Logger.getLogger(Servidor.class.getName());
 
     /**
@@ -243,6 +243,11 @@ public final class Cliente extends UnicastRemoteObject implements Interfaz_Servi
 
         return falta;
 
+    }
+    
+    @Override
+    public LinkedList<String> procesos_vigilados () {
+        return procesos;
     }
 
     /**

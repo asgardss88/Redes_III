@@ -1,7 +1,0 @@
-rm -rf downloads
-mkdir downloads
-touch links
-ARGS="-d downloads -a links -s 127.0.0.1 -X"
-DIR="$(pwd)/"
-java -Dfile.encoding=UTF-8 -classpath ${DIR}lib/commons-lang-2.6.jar:${DIR}lib/httpclient-4.0.3.jar:${DIR}lib/httpcore-4.0.1.jar:${DIR}lib/servlet-api-2.3.jar:${DIR}lib/slf4j-api-1.6.4.jar:${DIR}lib/varios.jar:${DIR} Cliente ${ARGS}
-

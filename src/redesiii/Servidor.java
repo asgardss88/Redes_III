@@ -21,8 +21,8 @@ import net.n3.nanoxml.*;
 
 public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Servidor {
 
-    private ConcurrentHashMap<String, maquinaCliente> clientes;
-    private ConcurrentHashMap<String, LinkedList<Caso>> config;
+    public ConcurrentHashMap<String, maquinaCliente> clientes;
+    public ConcurrentHashMap<String, LinkedList<Caso>> config;
     private int puerto = 1212;
     public boolean active;
     public static int salidaStd = 0;
@@ -152,6 +152,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         System.out.println("AYUDA:");
                         System.out.println("c <host>: \tPermite chequear el status del hosts con sus procesos asociados");
                         System.out.println("a <host>: \tPermite verificar la conexion con un host en especifico");
+                        System.out.println("p <host>: \tPermite listar todos los procesos que corre un host en especifico");
                         System.out.println("t: \t Permite verificar todas las conexiones con todos los host");
                         System.out.println("s: \t Permite activar el modo de servidor de verificacion automatica");
                         System.out.println("e: \t Cerrar la conexion.");
@@ -164,6 +165,15 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                             }
                         } else {
                             System.out.println("No hay host registrados.");
+                        }
+                        break;
+                    case 'p':
+                        arg = input.split("\\s+")[0];
+                        dir = InetAddress.getByName(arg);
+                        if (clientes.containsKey(dir.getHostAddress())) {
+                            listarProcesosCliente(dir.getHostAddress());
+                        } else {
+                            Servidor.logger.log(Level.INFO, "Direccion de Host no registrada");
                         }
                         break;
                     case 's':
@@ -359,6 +369,8 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
 
             String host = InetAddress.getLocalHost().toString().split("/")[1];
             Naming.rebind("rmi://" + host + ":" + server.puerto + "/Servidor", server);
+
+            servidor_web_starter webserver = new servidor_web_starter(server);
 
             while (server.active) {
                 server.run();
