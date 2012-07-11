@@ -1,4 +1,4 @@
 DIR="$(pwd)/"
-ARGS="$(pwd)/redesiii/config.xml 127.0.0.1"
+ARGS="$(pwd)/redesiii/config.xml 127.0.0.1 redesiii2012@gmail.com claveclave"
 java -Dfile.encoding=UTF-8 -classpath ${DIR}:${DIR}redesiii/nanoxml-2.2.3.jar:${DIR}redesiii/mail.jar redesiii/Servidor ${ARGS}
 

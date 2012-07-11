@@ -1,0 +1,4 @@
+DIR="$(pwd)/"
+ARGS=""
+java -Dfile.encoding=UTF-8 -classpath ${DIR}:${DIR}redesiii/nanoxml-2.2.3.jar:${DIR}redesiii/mail.jar redesiii/InterfazInicio ${ARGS}
+

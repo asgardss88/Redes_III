@@ -33,18 +33,49 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     public static String path_config;
     public static final Logger logger = Logger.getLogger(Servidor.class.getName());
     public LinkedList<String> servidores_backup;
+    public InterfazPrincipal interfaz;
+    public boolean gui;
+    public boolean continuar;
 
-    public Servidor() throws RemoteException {
+    public Servidor(String correo, String pass) throws RemoteException {
         super();
 
         servidores_backup = new LinkedList<>();
         clientes = new ConcurrentHashMap<>();
         config = new ConcurrentHashMap<>();
         active = true;
-        mail = "redesiii2012@gmail.com";
-        password = "claveclave";
+        mail =  correo;                          //"redesiii2012@gmail.com";
+        password = pass;                         //"claveclave";
         retardo = 2;
+        continuar=true;
         procesarConfiguracion();
+        gui = false;
+        System.setProperty("java.rmi.server.codebase", "file:" + System.getProperty("user.dir") + "/");
+        try {
+            java.rmi.registry.LocateRegistry.createRegistry(puerto);
+        } catch (java.rmi.server.ExportException ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.INFO, null, "El puerto ya esta ocupado, igual se inicia");
+        }
+
+        String host;
+        try {
+            host = InetAddress.getLocalHost().toString().split("/")[1];
+
+
+            Naming.rebind("rmi://" + host + ":" + puerto + "/Servidor", this);
+            servidor_web_starter webserver = new servidor_web_starter(this);
+
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void setInterfaz(InterfazPrincipal i) {
+
+        interfaz = i;
+        gui = true;
 
     }
 
@@ -194,7 +225,7 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
     }
 
     public void activarModoServidor() {
-        boolean continuar = true;
+        
 
 
         while (continuar) {
@@ -224,11 +255,17 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
      *
      */
     @Override
-    public LinkedList<String> registrar() throws RemoteException {
+    public synchronized LinkedList<String> registrar() throws RemoteException {
         try {
             String ip = getClientHost();
             maquinaCliente maquina_cliente = new maquinaCliente(ip, puerto);
             clientes.put(ip, maquina_cliente);
+
+            if (gui) {
+                interfaz.lista.add(0, new itemLista(ip));
+                interfaz.agregarAConsola("host " + ip + " conectandose...\n" + ip + " conectado");
+            }
+
             return (LinkedList<String>) servidores_backup.clone();
         } catch (ServerNotActiveException ex) {
             Servidor.logger.log(Level.SEVERE, null, ex);
@@ -236,13 +273,15 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         return null;
     }
 
-    private void listarProcesosCliente(String ip) {
+    public String[] listarProcesosCliente(String ip) {
         try {
             maquinaCliente c = clientes.get(ip);
             String[] s = c.listarProcesos();
             System.out.println("Salida Estandar de " + ip + " \n" + s[salidaStd]);
+            return s;
         } catch (RemoteException ex) {
             Servidor.logger.log(Level.SEVERE, null, ex);
+            return null;
         }
     }
 
@@ -287,13 +326,25 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
             String[] salida;
             String errores = new String();
             String msj;
-
+                if (gui) {
+                     itemLista i = interfaz.buscarIp(mc.ip);
+                     i.cambiarEstado(i.estado);
+                     interfaz.clientList.updateUI();
+                            }
             if (mc.verificarConexion()) {
 
                 ps = mc.verificarProcesos();
 
                 for (String p : ps) {
                     Servidor.logger.log(Level.INFO, "Proceso __{0}__ esta caido", p);
+                    
+                    if (gui) {
+
+                        itemLista i = interfaz.buscarIp(mc.ip);
+                        i.agregarLog(i.obtenerFecha()+" El proceso " + p + "se encuentra caido");
+                        interfaz.agregarAConsola(i.obtenerFecha()+" El proceso " + p + "se encuentra caido en "+mc.ip);
+                    }
+                    
                     sinreparo = true;
                     if (!mc.procesos_caidos.contains(p)) {
                         casos = config.get(p);
@@ -310,6 +361,14 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                                     if (salida[salidaStd].contains(c.flujonormal)) {
                                         Servidor.logger.log(Level.INFO, "Proceso __{0}__ arreglado", p);
                                         sinreparo = false;
+                                        
+                                        if (gui) {
+
+                                            itemLista i = interfaz.buscarIp(mc.ip);
+                                            i.agregarLog(i.obtenerFecha()+" Proceso " + p + "leavantado");
+                                            interfaz.agregarAConsola(i.obtenerFecha()+" Proceso " + p + " nuevamente levantado en "+mc.ip);
+                                        }
+                                        
                                         break;
                                     } else {
                                     }
@@ -320,7 +379,15 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                         }
 
                         if (sinreparo) {
-                            msj = "Encontrado problema al intentar levantar " + p + " y se encontraron los siguientes errores:\n" + errores;
+                            msj = "Encontrado problema al intentar levantar " + p + " en "+mc.ip+" y se encontraron los siguientes errores:\n" + errores;
+                            if (gui) {
+
+                                itemLista i = interfaz.buscarIp(mc.ip);
+                                i.agregarLog(i.obtenerFecha()+" "+msj);
+                                i.cambiarEstado("PS");
+                                interfaz.agregarAConsola(i.obtenerFecha()+" "+msj);
+                                interfaz.clientList.updateUI();
+                            }
                             Correo correo = new Correo(msj, "Error al levantar servicio", mail, password);
                             correo.enviar();
                             Servidor.logger.log(Level.INFO, "Enviado correo notificando del error al levantar __{0}__", p);
@@ -333,7 +400,15 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
                     }
                 }
             } else {
+                if (gui) {
+
+                    itemLista i = interfaz.buscarIp(mc.ip);
+                    i.cambiarEstado("FL");
+                    i.agregarLog("Fallo en la conexión con" + i.ip);
+                    interfaz.clientList.updateUI();
+                }
                 clientes.remove(mc.ip);
+
                 msj = "No se pudo establecer conexion con " + mc.ip + " revise si el equipo esta encendido o si hay algun problema en la red";
                 Correo correo = new Correo(msj, "Problema estableciendo conexion", mail, password);
                 correo.enviar();
@@ -353,33 +428,23 @@ public class Servidor extends UnicastRemoteObject implements Interfaz_Cliente_Se
         try {
 
             path_config = args[0];
-            System.setProperty(
-                    "java.rmi.server.codebase",
-                    "file:" + System.getProperty("user.dir") + "/");
-            Servidor server = new Servidor();
+
+            Servidor server = new Servidor(args[2],args[3]);
 
             server.agregar_servidores_backup(args[1]);
 
 
-            try {
-                java.rmi.registry.LocateRegistry.createRegistry(server.puerto);
-            } catch (java.rmi.server.ExportException ex) {
-                Logger.getLogger(Servidor.class.getName()).log(Level.INFO, null, "El puerto ya esta ocupado, igual se inicia");
-            }
 
-            String host = InetAddress.getLocalHost().toString().split("/")[1];
-            Naming.rebind("rmi://" + host + ":" + server.puerto + "/Servidor", server);
 
-            servidor_web_starter webserver = new servidor_web_starter(server);
-
+            
             while (server.active) {
                 server.run();
             }
             System.exit(0);
 
 
-        } catch (MalformedURLException | UnknownHostException | RemoteException ex) {
-            Servidor.logger.log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

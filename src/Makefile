@@ -18,7 +18,13 @@ CLASSES = \
 	redesiii/Prueba.java \
 	redesiii/Interfaz_Servidor_Cliente.java \
 	redesiii/servidor_web.java \
-	redesiii/servidor_web_starter.java
+	redesiii/servidor_web_starter.java \
+	redesiii/InterfazAccion.java \
+	redesiii/InterfazInicio.java \
+	redesiii/InterfazPrincipal.java \
+	redesiii/itemLista.java \
+	redesiii/Verificador.java
+
 
 default: classes
 
