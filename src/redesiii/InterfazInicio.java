@@ -23,7 +23,7 @@ public class InterfazInicio extends javax.swing.JFrame {
      */
     public InterfazInicio() {
         super("Servedor de Verificación");
-        
+
         initComponents();
         path.setEditable(false);
     }
@@ -170,11 +170,10 @@ public class InterfazInicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ipRespaldoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ipRespaldoActionPerformed
-        verif_esresp=true;
+        verif_esresp = true;
     }//GEN-LAST:event_ipRespaldoActionPerformed
 
     private void pathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pathActionPerformed
-        
     }//GEN-LAST:event_pathActionPerformed
 
     private void esRespaldoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_esRespaldoActionPerformed
@@ -209,37 +208,49 @@ public class InterfazInicio extends javax.swing.JFrame {
         } else {
 
             path.setText(archivo.getAbsolutePath());
-            verif_path=true;
+            verif_path = true;
 
         }
     }//GEN-LAST:event_botonElegirActionPerformed
 
     private void botonInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonInicioActionPerformed
         try {
-            if(verif_path){
-            Servidor.path_config = path.getText();
+            if (verif_path && campoPassword.getPassword().length > 0) {
+                Servidor.path_config = path.getText();
 
-            System.out.println("aki");
-           
-            
-           //if (esRespaldo.isSelected() && verif_esresp && !ipRespaldo.getText().matches("\\s*"))
-            {
-                Servidor server = new Servidor(campoCorreo.getText(),traducirClave(campoPassword.getPassword()));
-                
-                server.agregar_servidores_backup(ipRespaldo.getText());
-            
-            
-            
-            
+                System.out.println("aki");
+
+                if (!campoCorreo.getText().matches("[a-zA-Z]\\w*@\\w+\\.com")) {
+                    JOptionPane.showMessageDialog(this,
+                            "ERROR: Campo de correo con formato incorrecto", "Campo de correo con formato incorrecto", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                //if (esRespaldo.isSelected() && verif_esresp && !ipRespaldo.getText().matches("\\s*"))
+
+                Servidor server = new Servidor(campoCorreo.getText(), traducirClave(campoPassword.getPassword()));
+                if (!esRespaldo.isSelected()) {
+                    if (ipRespaldo.getText() != null && ipRespaldo.getText().matches("(\\d){1,3}\\.(\\d){1,3}\\.(\\d){1,3}\\.(\\d){1,3}")) {
+                        server.agregar_servidores_backup(ipRespaldo.getText());
+                    } else {
+                        JOptionPane.showMessageDialog(this,
+                                "ERROR: Campos obligatorios incompletos o con formato incorrecto", "Campos obligatorios incompletos o con formato incorrecto", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                }
+
+
+
 
                 InterfazPrincipal interfazP = new InterfazPrincipal(server);
                 interfazP.setVisible(true);
-            }
-            }else{
-                
-                 JOptionPane.showMessageDialog(this,
-                    "Debes seleccionar un path", "Falta seleccionar path", JOptionPane.ERROR_MESSAGE);
-            
+
+            } else {
+
+                JOptionPane.showMessageDialog(this,
+                        "ERROR: Campos obligatorios incompletos", "Campos obligatorios incompletos", JOptionPane.ERROR_MESSAGE);
+
             }
         } catch (RemoteException ex) {
             Logger.getLogger(InterfazInicio.class.getName()).log(Level.SEVERE, null, ex);
@@ -255,15 +266,16 @@ public class InterfazInicio extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_campoCorreoActionPerformed
 
-    public String traducirClave(char[] clave){
-        String dec="";
-        for(char i: clave){
-            dec+=i;
+    public String traducirClave(char[] clave) {
+        String dec = "";
+        for (char i : clave) {
+            dec += i;
         }
-        System.out.println("la clave es |"+dec+"|");
+        System.out.println("la clave es |" + dec + "|");
         return dec;
-    
+
     }
+
     /**
      * @param args the command line arguments
      */
