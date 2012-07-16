@@ -1,2 +1,2 @@
-nfsd
-dhclient2
+nfsd >echo 1
+dhclient >echo 1

@@ -9,6 +9,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +32,7 @@ public final class Cliente extends UnicastRemoteObject implements Interfaz_Servi
     private int puerto; // El puerto donde se desea establecer
     //la conexion.
     public static String process_path;
-    public LinkedList<String> procesos;
+    public ConcurrentHashMap<String,String> procesos;
     public static final Logger logger = Logger.getLogger(Servidor.class.getName());
 
     /**
@@ -48,7 +50,7 @@ public final class Cliente extends UnicastRemoteObject implements Interfaz_Servi
         this.servidores_backup = new LinkedList<>();
         conectar_con_servidor(ip);
 
-        procesos = new LinkedList<>();
+        procesos = new ConcurrentHashMap<>();
 
         this.leerProcesos("process");
 
@@ -178,13 +180,14 @@ public final class Cliente extends UnicastRemoteObject implements Interfaz_Servi
     public void leerProcesos(String arch) {
         try {
             BufferedReader buffer = new BufferedReader(new FileReader(process_path));
-
+            String[] separado;
             String linea;
             try {
                 while ((linea = buffer.readLine()) != null) {
                     if (!linea.matches("\\s*")) { //se ignora lineas en blanco
-
-                        procesos.add(linea);
+                        separado = linea.split("\\s*>");
+                        System.out.println("|"+separado[0]+"| "+"|"+separado[1]+"| ");
+                        procesos.put(separado[0], separado[1]);
 
 
                     }
@@ -217,14 +220,20 @@ public final class Cliente extends UnicastRemoteObject implements Interfaz_Servi
 
         LinkedList<String> falta = new LinkedList();
 
-        for (String p : procesos) {
+        for (String p : procesos.keySet()) {
             n = 1;
 
             while (n < separado.length) {
 
                 if (separado[n].compareTo(p) == 0) {
-                    break;
-
+                    
+                    if(ejecutar(procesos.get(separado[n]))[0].compareTo("1")==0){
+                        break;
+                    }else{
+                        falta.addLast(p);
+                        break;
+                    }
+                        
                 }
                 n++;
             }
@@ -246,8 +255,8 @@ public final class Cliente extends UnicastRemoteObject implements Interfaz_Servi
     }
     
     @Override
-    public LinkedList<String> procesos_vigilados () {
-        return procesos;
+    public Set<String> procesos_vigilados () {
+        return procesos.keySet();
     }
 
     /**

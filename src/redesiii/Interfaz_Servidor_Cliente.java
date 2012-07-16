@@ -7,6 +7,7 @@ package redesiii;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  *
@@ -48,7 +49,7 @@ public interface Interfaz_Servidor_Cliente extends Remote {
      */
     public LinkedList<String> verificarProcesos() throws RemoteException;
     
-    public LinkedList<String> procesos_vigilados()throws RemoteException;
+    public Set<String> procesos_vigilados()throws RemoteException;
     
     public boolean verificarConexion() throws RemoteException;
     
