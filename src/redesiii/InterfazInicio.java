@@ -218,7 +218,6 @@ public class InterfazInicio extends javax.swing.JFrame {
             if (verif_path && campoPassword.getPassword().length > 0) {
                 Servidor.path_config = path.getText();
 
-                System.out.println("aki");
 
                 if (!campoCorreo.getText().matches("[a-zA-Z]\\w*@\\w+\\.com")) {
                     JOptionPane.showMessageDialog(this,
@@ -226,7 +225,7 @@ public class InterfazInicio extends javax.swing.JFrame {
                     return;
                 }
 
-                //if (esRespaldo.isSelected() && verif_esresp && !ipRespaldo.getText().matches("\\s*"))
+                
 
                 Servidor server = new Servidor(campoCorreo.getText(), traducirClave(campoPassword.getPassword()));
                 if (!esRespaldo.isSelected()) {
@@ -271,7 +270,7 @@ public class InterfazInicio extends javax.swing.JFrame {
         for (char i : clave) {
             dec += i;
         }
-        System.out.println("la clave es |" + dec + "|");
+       
         return dec;
 
     }
